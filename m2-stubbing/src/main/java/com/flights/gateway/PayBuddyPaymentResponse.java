@@ -1,10 +1,16 @@
 package com.flights.gateway;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class PayBuddyPaymentResponse {
     private final String paymentId;
     private final PaymentResponseStatus paymentResponseStatus;
 
-    public PayBuddyPaymentResponse(String paymentId, PaymentResponseStatus paymentResponseStatus) {
+    @JsonCreator
+    public PayBuddyPaymentResponse(@JsonProperty("paymentId") String paymentId,
+                                   @JsonProperty("paymentResponseStatus") PaymentResponseStatus paymentResponseStatus) {
+
         this.paymentId = paymentId;
         this.paymentResponseStatus = paymentResponseStatus;
     }

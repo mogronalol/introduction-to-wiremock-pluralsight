@@ -1,5 +1,6 @@
 package com.flights.service;
 
+import com.flights.gateway.PayBuddyFraudCheckResponse;
 import com.flights.gateway.PayBuddyGateway;
 import com.flights.gateway.PayBuddyPaymentResponse;
 
@@ -27,6 +28,20 @@ public class BookingService {
             return new BookingResponse(bookingId, payBuddyPaymentResponse.getPaymentId(), BookingResponse.BookingResponseStatus.SUCCESS);
         }
 
-        throw new RuntimeException("Unsupported response");
+        throw new RuntimeException("Unsupported response status: " + payBuddyPaymentResponse.getPaymentResponseStatus());
+    }
+
+    public BookingResponse payForBookingWithFraudCheck(final String bookingId,
+                                         final String creditCardNumber,
+                                         final LocalDate creditCardExpiry,
+                                         final BigDecimal amount) {
+
+        final PayBuddyFraudCheckResponse payBuddyFraudCheckResponse = payBuddyGateway.fraudCheck(creditCardNumber);
+
+        if (!payBuddyFraudCheckResponse.isBlacklisted()) {
+            return payForBooking(bookingId, creditCardNumber, creditCardExpiry, amount);
+        }
+
+        throw new RuntimeException("Unsupported response status: " + payBuddyFraudCheckResponse.isBlacklisted());
     }
 }
