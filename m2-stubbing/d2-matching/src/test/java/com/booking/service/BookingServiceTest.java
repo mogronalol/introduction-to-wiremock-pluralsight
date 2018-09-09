@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.booking.service.BookingResponse.BookingResponseStatus.REJECTED;
 import static com.booking.service.BookingResponse.BookingResponseStatus.SUCCESS;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +28,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void shouldPayForBooking() {
+    public void shouldSucceedToPayForBooking() {
         // Given
         stubFor(post(urlPathEqualTo("/payments"))
                 .withRequestBody(equalToJson("{" +
@@ -51,4 +52,31 @@ public class BookingServiceTest {
         // Then
         assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", SUCCESS));
     }
+
+    @Test
+    public void shouldFailToPayForBooking() {
+        // Given
+        stubFor(post(urlPathEqualTo("/payments"))
+                .withRequestBody(equalToJson("{" +
+                        "  \"creditCardNumber\": \"2222-2222-2222-2222\"," +
+                        "  \"creditCardExpiry\": \"2018-02-01\"," +
+                        "  \"amount\": 20.55" +
+                        "}"))
+                .willReturn(okJson("{" +
+                        "  \"paymentId\": \"2222\"," +
+                        "  \"paymentResponseStatus\": \"FAILED\"" +
+                        "}")));
+
+        // When
+        final BookingResponse bookingResponse = bookingService.payForBooking(
+                new BookingPayment(
+                        "1111",
+                        new BigDecimal("20.55"),
+                        new CreditCard("2222-2222-2222-2222",
+                                LocalDate.of(2018, 2, 1))));
+
+        // Then
+        assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", REJECTED));
+    }
+
 }

@@ -24,6 +24,6 @@ public class PayBuddyPaymentResponse {
     }
 
     public enum PaymentResponseStatus {
-        SUCCESS
+        SUCCESS, FAILED
     }
 }

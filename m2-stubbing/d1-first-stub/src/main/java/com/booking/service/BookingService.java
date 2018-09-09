@@ -21,8 +21,8 @@ public class BookingService {
 
         if (payBuddyPaymentResponse.getPaymentResponseStatus() == PayBuddyPaymentResponse.PaymentResponseStatus.SUCCESS) {
             return new BookingResponse(bookingPayment.getBookingId(), payBuddyPaymentResponse.getPaymentId(), BookingResponse.BookingResponseStatus.SUCCESS);
+        } else {
+            return new BookingResponse(bookingPayment.getBookingId(), payBuddyPaymentResponse.getPaymentId(), BookingResponse.BookingResponseStatus.REJECTED);
         }
-
-        throw new RuntimeException("Unsupported response status: " + payBuddyPaymentResponse.getPaymentResponseStatus());
     }
 }

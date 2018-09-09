@@ -16,7 +16,7 @@ public class BookingResponse {
     }
 
     public enum BookingResponseStatus {
-        SUCCESS
+        SUCCESS, REJECTED, SUSPECTED_FRAUD
     }
 
     public String getBookingId() {
