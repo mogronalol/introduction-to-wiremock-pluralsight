@@ -14,8 +14,12 @@ public class PayBuddyGateway {
         this.payBuddyBaseUrl = String.format("http://%s:%s/", payBuddyHost, payBuddyPort);
     }
 
-    public PayBuddyPaymentResponse makePayment(String creditCardNumber, LocalDate creditCardExpiry, BigDecimal amount) {
-        final PayBuddyPaymentRequest request = new PayBuddyPaymentRequest(creditCardNumber, creditCardExpiry, amount);
+    public PayBuddyPaymentResponse makePayment(String paymentId, String creditCardNumber, LocalDate creditCardExpiry, BigDecimal amount) {
+        final PayBuddyPaymentRequest request = new PayBuddyPaymentRequest(paymentId, creditCardNumber, creditCardExpiry, amount);
         return restTemplate.postForObject(payBuddyBaseUrl + "/payments", request, PayBuddyPaymentResponse.class);
+    }
+
+    public PayBuddyFraudCheckResponse fraudCheck(String creditCardNumber) {
+        return restTemplate.getForObject(payBuddyBaseUrl + "/blacklisted-cards/" + creditCardNumber, PayBuddyFraudCheckResponse.class);
     }
 }

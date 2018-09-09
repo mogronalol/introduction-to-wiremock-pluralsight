@@ -6,25 +6,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class BookingResponse {
     private final String bookingId;
-    private final String paymentId;
     private final BookingResponseStatus bookingResponseStatus;
 
-    public BookingResponse(String bookingId, String paymentId, BookingResponseStatus bookingResponseStatus) {
+    public BookingResponse(String bookingId, BookingResponseStatus bookingResponseStatus) {
         this.bookingId = bookingId;
-        this.paymentId = paymentId;
         this.bookingResponseStatus = bookingResponseStatus;
     }
 
     public enum BookingResponseStatus {
-        SUCCESS
+        SUCCESS, REJECTED, SUSPECTED_FRAUD
     }
 
     public String getBookingId() {
         return bookingId;
-    }
-
-    public String getPaymentId() {
-        return paymentId;
     }
 
     public BookingResponseStatus getBookingResponseStatus() {

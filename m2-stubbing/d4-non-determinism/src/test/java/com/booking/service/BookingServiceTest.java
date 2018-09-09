@@ -10,9 +10,13 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.IntStream;
 
 import static com.booking.service.BookingResponse.BookingResponseStatus.SUCCESS;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static java.util.stream.Collectors.toSet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookingServiceTest {
@@ -20,6 +24,7 @@ public class BookingServiceTest {
     public WireMockRule wireMockRule = new WireMockRule();
 
     private BookingService bookingService;
+    private Random random = new Random();
 
     @Before
     public void setUp() {
@@ -27,7 +32,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void shouldPayForBookingWithOurOwnPaymentId() {
+    public void shouldPayForSingleBooking() {
         // Given
         stubFor(post(urlPathEqualTo("/payments"))
                 .withRequestBody(matchingJsonPath("$.creditCardNumber", equalTo("1234-1234-1234-1234")))
@@ -56,7 +61,7 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void shouldPayForMultipleBookingsWithOurOwnPaymentId() {
+    public void shouldPayFor100Bookings() {
         // Given
         stubFor(post(urlPathEqualTo("/payments"))
                 .withRequestBody(matchingJsonPath("$.creditCardNumber"))
@@ -72,15 +77,34 @@ public class BookingServiceTest {
                 "  \"blacklisted\": \"false\"" +
                 "}")));
 
+        final Set<BookingPayment> batch = IntStream.range(0, 100).mapToObj(this::generateBookingPayment).collect(toSet());
+
         // When
-        final BookingResponse bookingResponse = bookingService.payForBookingWithMultipleCards(
-                new BookingPayment(
-                        "1111",
-                        new BigDecimal("20.55"),
-                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
+        final Set<BookingResponse> bookingResponses = bookingService.payForMultipleBookingsInBatch(batch);
 
         // Then
-        assertThat(bookingResponse.getBookingId()).isEqualTo("1111");
-        assertThat(bookingResponse.getBookingResponseStatus()).isEqualTo(SUCCESS);
+        assertThat(bookingResponses).hasSize(100);
+        for (int i = 0; i < 100; i++) {
+            assertThat(bookingResponses).contains(new BookingResponse(Integer.toString(i), SUCCESS));
+        }
+    }
+
+    private BookingPayment generateBookingPayment(int i) {
+        final CreditCard creditCard = new CreditCard(randomCreditCardNumber(), LocalDate.of(i, 1, 1));
+        return new BookingPayment(Integer.toString(i), new BigDecimal(i), creditCard);
+    }
+
+    private String randomCreditCardNumber() {
+        return randomCreditCardDigitSection() +
+                "-" +
+                randomCreditCardDigitSection() +
+                "-" +
+                randomCreditCardDigitSection() +
+                "-" +
+                randomCreditCardDigitSection();
+    }
+
+    private String randomCreditCardDigitSection() {
+        return IntStream.range(0, 4).mapToObj(i -> Integer.toString(random.nextInt(9) + 1)).reduce((l, r) -> l + r).get();
     }
 }

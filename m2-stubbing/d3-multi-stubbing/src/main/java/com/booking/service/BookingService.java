@@ -2,6 +2,7 @@ package com.booking.service;
 
 import com.booking.domain.BookingPayment;
 import com.booking.domain.CreditCard;
+import com.booking.gateway.PayBuddyFraudCheckResponse;
 import com.booking.gateway.PayBuddyGateway;
 import com.booking.gateway.PayBuddyPaymentResponse;
 
@@ -16,6 +17,12 @@ public class BookingService {
     public BookingResponse payForBooking(final BookingPayment bookingPayment) {
 
         final CreditCard creditCard = bookingPayment.getCreditCard();
+
+        final PayBuddyFraudCheckResponse payBuddyFraudCheckResponse = payBuddyGateway.fraudCheck(creditCard.getNumber());
+
+        if (payBuddyFraudCheckResponse.isBlacklisted()) {
+            throw new RuntimeException("Cannot make payment due to blacklist");
+        }
 
         final PayBuddyPaymentResponse payBuddyPaymentResponse = payBuddyGateway.makePayment(creditCard.getNumber(), creditCard.getExpiry(), bookingPayment.getAmount());
 

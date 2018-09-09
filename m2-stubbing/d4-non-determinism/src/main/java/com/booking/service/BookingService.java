@@ -1,7 +1,15 @@
 package com.booking.service;
 
 import com.booking.domain.BookingPayment;
+import com.booking.domain.CreditCard;
+import com.booking.gateway.PayBuddyFraudCheckResponse;
 import com.booking.gateway.PayBuddyGateway;
+import com.booking.gateway.PayBuddyPaymentResponse;
+
+import java.util.Set;
+import java.util.UUID;
+
+import static java.util.stream.Collectors.toSet;
 
 public class BookingService {
 
@@ -13,29 +21,26 @@ public class BookingService {
 
     public BookingResponse payForBooking(final BookingPayment bookingPayment) {
 
-//        UUID.randomUUID();
-//
-//        final PayBuddyPaymentResponse payBuddyPaymentResponse = payBuddyGateway.makePayment(creditCard.getNumber(), creditCard.getExpiry(), creditCard.getAmount());
-//
-//        if (payBuddyPaymentResponse.getPaymentResponseStatus() == PayBuddyPaymentResponse.PaymentResponseStatus.SUCCESS) {
-//            return new BookingResponse(bookingId, payBuddyPaymentResponse.getPaymentId(), BookingResponse.BookingResponseStatus.SUCCESS);
-//        }
-//
-//        throw new RuntimeException("Unsupported response status: " + payBuddyPaymentResponse.getPaymentResponseStatus());
+        final CreditCard creditCard = bookingPayment.getCreditCard();
 
-        return null;
+        final PayBuddyFraudCheckResponse payBuddyFraudCheckResponse = payBuddyGateway.fraudCheck(creditCard.getNumber());
+
+        if (payBuddyFraudCheckResponse.isBlacklisted()) {
+            return new BookingResponse(bookingPayment.getBookingId(), BookingResponse.BookingResponseStatus.SUSPECTED_FRAUD);
+        }
+
+        final String paymentId = UUID.randomUUID().toString();
+
+        final PayBuddyPaymentResponse payBuddyPaymentResponse = payBuddyGateway.makePayment(paymentId, creditCard.getNumber(), creditCard.getExpiry(), bookingPayment.getAmount());
+
+        if (payBuddyPaymentResponse.getPaymentResponseStatus() == PayBuddyPaymentResponse.PaymentResponseStatus.SUCCESS) {
+            return new BookingResponse(bookingPayment.getBookingId(), BookingResponse.BookingResponseStatus.SUCCESS);
+        } else {
+            return new BookingResponse(bookingPayment.getBookingId(), BookingResponse.BookingResponseStatus.REJECTED);
+        }
     }
 
-    public BookingResponse payForBookingWithMultipleCards(final BookingPayment bookingPayment) {
-
-//        final PayBuddyPaymentResponse payBuddyPaymentResponse = payBuddyGateway.makePayment(creditCard.getNumber(), creditCard.getExpiry(), creditCard.getAmount());
-//
-//        if (payBuddyPaymentResponse.getPaymentResponseStatus() == PayBuddyPaymentResponse.PaymentResponseStatus.SUCCESS) {
-//            return new BookingResponse(bookingId, payBuddyPaymentResponse.getPaymentId(), BookingResponse.BookingResponseStatus.SUCCESS);
-//        }
-//
-//        throw new RuntimeException("Unsupported response status: " + payBuddyPaymentResponse.getPaymentResponseStatus());
-
-        return null;
+    public Set<BookingResponse> payForMultipleBookingsInBatch(final Set<BookingPayment> bookingPayment) {
+        return bookingPayment.stream().map(this::payForBooking).collect(toSet());
     }
 }
