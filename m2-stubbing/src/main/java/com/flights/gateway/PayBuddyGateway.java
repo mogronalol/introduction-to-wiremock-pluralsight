@@ -30,4 +30,9 @@ public class PayBuddyGateway {
     public PayBuddyFraudCheckResponse fraudCheck(String creditCardNumber) {
         return restTemplate.getForObject(payBuddyBaseUrl + "/blacklisted-cards/" + creditCardNumber, PayBuddyFraudCheckResponse.class);
     }
+
+    public PayBuddyPaymentWithPaymentIDResponse makePaymentWithId(String paymentId, String creditCardNumber, LocalDate creditCardExpiry, BigDecimal amount) {
+        final PayBuddyPaymentWithPaymentIDRequest request = new PayBuddyPaymentWithPaymentIDRequest(creditCardNumber, creditCardExpiry, amount, paymentId);
+        return restTemplate.postForObject(payBuddyBaseUrl + "/payments", request, PayBuddyPaymentWithPaymentIDResponse.class);
+    }
 }

@@ -1,5 +1,6 @@
 package com.flights;
 
+import com.flights.domain.CreditCard;
 import com.flights.gateway.PayBuddyGateway;
 import com.flights.service.BookingResponse;
 import com.flights.service.BookingService;
@@ -43,7 +44,7 @@ public class Demo2AnswerTest {
                                 "}")));
 
         // When
-        final BookingResponse bookingResponse = bookingService.payForBooking("1111", "1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55"));
+        final BookingResponse bookingResponse = bookingService.payForBooking("1111", new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")));
 
         // Then
         assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", SUCCESS));
