@@ -16,7 +16,7 @@ import static com.flights.service.BookingResponse.BookingResponseStatus.SUCCESS;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Demo3AnswerTest {
+public class Demo3MultiStubbingAnswerTest {
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule();

@@ -16,7 +16,7 @@ import static com.flights.service.BookingResponse.BookingResponseStatus.SUCCESS;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class Demo2AnswerTest {
+public class Demo1StubAnswerTest {
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule();
@@ -29,19 +29,12 @@ public class Demo2AnswerTest {
     }
 
     @Test
-    public void shouldPayForBookingWithFraudCheck() {
+    public void shouldPayForBooking() {
         // Given
-        stubFor(post(urlPathEqualTo("/payments")).withRequestBody(
-                equalToJson("{" +
-                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
-                        "  \"creditCardExpiry\": \"2018-02-01\"," +
-                        "  \"amount\": 20.55" +
-                        "}"))
-                .willReturn(
-                        okJson("{" +
-                                "  \"paymentId\": \"2222\"," +
-                                "  \"paymentResponseStatus\": \"SUCCESS\"" +
-                                "}")));
+        stubFor(any(anyUrl()).willReturn(okJson("{" +
+                "  \"paymentId\": \"2222\"," +
+                "  \"paymentResponseStatus\": \"SUCCESS\"" +
+                "}")));
 
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking("1111", new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")));
@@ -49,4 +42,5 @@ public class Demo2AnswerTest {
         // Then
         assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", SUCCESS));
     }
+
 }
