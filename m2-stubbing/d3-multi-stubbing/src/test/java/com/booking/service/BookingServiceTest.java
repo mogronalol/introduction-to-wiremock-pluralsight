@@ -1,5 +1,6 @@
 package com.booking.service;
 
+import com.booking.domain.BookingPayment;
 import com.booking.domain.CreditCard;
 import com.booking.gateway.PayBuddyGateway;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -45,7 +46,11 @@ public class BookingServiceTest {
                 "}")));
 
         // When
-        final BookingResponse bookingResponse = bookingService.payForBooking("1111",new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")));
+        final BookingResponse bookingResponse = bookingService.payForBooking(
+                new BookingPayment(
+                        "1111",
+                        new BigDecimal("20.55"),
+                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
 
         // Then
         assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", SUCCESS));

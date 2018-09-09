@@ -1,5 +1,6 @@
 package com.booking.service;
 
+import com.booking.domain.BookingPayment;
 import com.booking.domain.CreditCard;
 import com.booking.gateway.PayBuddyGateway;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -44,8 +45,10 @@ public class BookingServiceTest {
 
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
-                "1111",
-                new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")));
+                new BookingPayment(
+                        "1111",
+                        new BigDecimal("20.55"),
+                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
 
         // Then
         assertThat(bookingResponse.getBookingId()).isEqualTo("1111");
@@ -71,14 +74,10 @@ public class BookingServiceTest {
 
         // When
         final BookingResponse bookingResponse = bookingService.payForBookingWithMultipleCards(
-                "1111",
-                new CreditCard("1111-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")),
-                new CreditCard("2222-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")),
-                new CreditCard("3333-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")),
-                new CreditCard("4444-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")),
-                new CreditCard("5555-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55")),
-                new CreditCard("6666-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55"))
-        );
+                new BookingPayment(
+                        "1111",
+                        new BigDecimal("20.55"),
+                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
 
         // Then
         assertThat(bookingResponse.getBookingId()).isEqualTo("1111");
