@@ -32,9 +32,9 @@ public class BookingService {
     }
 
     public BookingResponse payForBookingWithFraudCheck(final String bookingId,
-                                         final String creditCardNumber,
-                                         final LocalDate creditCardExpiry,
-                                         final BigDecimal amount) {
+                                                       final String creditCardNumber,
+                                                       final LocalDate creditCardExpiry,
+                                                       final BigDecimal amount) {
 
         final PayBuddyFraudCheckResponse payBuddyFraudCheckResponse = payBuddyGateway.fraudCheck(creditCardNumber);
 

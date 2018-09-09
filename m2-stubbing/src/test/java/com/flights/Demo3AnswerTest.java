@@ -30,17 +30,24 @@ public class Demo3AnswerTest {
     @Test
     public void shouldPayForBookingWithFraudCheck() {
         // Given
-        stubFor(post(urlPathEqualTo("/payments")).willReturn(okJson("{" +
-                "  \"paymentId\": \"2222\"," +
-                "  \"paymentResponseStatus\": \"SUCCESS\"" +
-                "}")));
+        stubFor(post(urlPathEqualTo("/payments")).withRequestBody(
+                equalToJson("{" +
+                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
+                        "  \"creditCardExpiry\": \"2018-02-01\"," +
+                        "  \"amount\": 20.55" +
+                        "}"))
+                .willReturn(
+                        okJson("{" +
+                                "  \"paymentId\": \"2222\"," +
+                                "  \"paymentResponseStatus\": \"SUCCESS\"" +
+                                "}")));
 
         stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234")).willReturn(okJson("{" +
                 "  \"blacklisted\": \"false\"" +
                 "}")));
 
         // When
-        final BookingResponse bookingResponse = bookingService.payForBookingWithFraudCheck("1111", "1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55"));
+        final BookingResponse bookingResponse = bookingService.payForBookingWithFraudCheck("1111","1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55"));
 
         // Then
         assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", SUCCESS));

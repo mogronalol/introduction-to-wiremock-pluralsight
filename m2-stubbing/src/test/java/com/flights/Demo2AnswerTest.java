@@ -30,10 +30,17 @@ public class Demo2AnswerTest {
     @Test
     public void shouldPayForBookingWithFraudCheck() {
         // Given
-        stubFor(post(urlPathEqualTo("/payments")).willReturn(okJson("{" +
-                "  \"paymentId\": \"2222\"," +
-                "  \"paymentResponseStatus\": \"SUCCESS\"" +
-                "}")));
+        stubFor(post(urlPathEqualTo("/payments")).withRequestBody(
+                equalToJson("{" +
+                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
+                        "  \"creditCardExpiry\": \"2018-02-01\"," +
+                        "  \"amount\": 20.55" +
+                        "}"))
+                .willReturn(
+                        okJson("{" +
+                                "  \"paymentId\": \"2222\"," +
+                                "  \"paymentResponseStatus\": \"SUCCESS\"" +
+                                "}")));
 
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking("1111", "1234-1234-1234-1234", LocalDate.of(2018, 2, 1), new BigDecimal("20.55"));
