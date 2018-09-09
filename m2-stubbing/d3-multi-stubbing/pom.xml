@@ -3,21 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>introduction-to-wiremock</artifactId>
+        <artifactId>m2-stubbing</artifactId>
         <groupId>pluralsight</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>m2-stubbing</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>d1-first-stub</module>
-        <module>d2-matching</module>
-        <module>d3-multi-stubbing</module>
-        <module>d4-non-determinism</module>
-        <module>d5-priority</module>
-    </modules>
+    <artifactId>d3-multi-stubbing</artifactId>
 
 
 </project>
