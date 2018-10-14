@@ -3,6 +3,7 @@ package com.booking.service;
 import com.booking.domain.BookingPayment;
 import com.booking.domain.CreditCard;
 import com.booking.gateway.PayBuddyGateway;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,9 +14,7 @@ import java.time.LocalDate;
 import java.util.Random;
 import java.util.Set;
 
-import static com.booking.service.BookingResponse.BookingResponseStatus.REJECTED;
-import static com.booking.service.BookingResponse.BookingResponseStatus.SUCCESS;
-import static com.booking.service.BookingResponse.BookingResponseStatus.SUSPECTED_FRAUD;
+import static com.booking.service.BookingResponse.BookingResponseStatus.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,6 +32,17 @@ public class BookingServiceTest {
 
     @Test
     public void shouldPayForMultipleBookingsOneOfWhichWillFailOnTheFraudCheck() {
+
+
+        WireMock.stubFor(
+                any(
+                        urlPathMatching("/delay"))
+                        .willReturn(
+                                ok().withFixedDelay(1000)
+                        )
+        );
+
+
         // Given
         stubFor(post(urlPathEqualTo("/payments"))
                 .withRequestBody(matchingJsonPath("$.creditCardNumber"))

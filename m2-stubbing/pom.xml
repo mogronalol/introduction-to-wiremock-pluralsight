@@ -11,6 +11,7 @@
 
     <artifactId>m2-stubbing</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>d1-first-stub</module>
         <module>d2-matching</module>
