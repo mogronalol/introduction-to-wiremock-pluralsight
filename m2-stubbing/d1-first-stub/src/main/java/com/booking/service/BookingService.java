@@ -4,6 +4,8 @@ import com.booking.domain.BookingPayment;
 import com.booking.domain.CreditCard;
 import com.booking.gateway.PayBuddyGateway;
 import com.booking.gateway.PayBuddyPaymentResponse;
+import com.booking.gateway.PayBuddyPaymentResponse.PaymentResponseStatus;
+import com.booking.service.BookingResponse.BookingResponseStatus;
 
 public class BookingService {
 
@@ -17,12 +19,24 @@ public class BookingService {
 
         final CreditCard creditCard = bookingPayment.getCreditCard();
 
-        final PayBuddyPaymentResponse payBuddyPaymentResponse = payBuddyGateway.makePayment(creditCard.getNumber(), creditCard.getExpiry(), bookingPayment.getAmount());
+        final PayBuddyPaymentResponse payBuddyPaymentResponse =
+                payBuddyGateway.makePayment(
+                        creditCard.getNumber(),
+                        creditCard.getExpiry(),
+                        bookingPayment.getAmount());
 
-        if (payBuddyPaymentResponse.getPaymentResponseStatus() == PayBuddyPaymentResponse.PaymentResponseStatus.SUCCESS) {
-            return new BookingResponse(bookingPayment.getBookingId(), payBuddyPaymentResponse.getPaymentId(), BookingResponse.BookingResponseStatus.SUCCESS);
+        final PaymentResponseStatus status = payBuddyPaymentResponse.getPaymentResponseStatus();
+
+        if (status == PaymentResponseStatus.SUCCESS) {
+            return new BookingResponse(
+                    bookingPayment.getBookingId(),
+                    payBuddyPaymentResponse.getPaymentId(),
+                    BookingResponseStatus.COMPLETE);
         } else {
-            return new BookingResponse(bookingPayment.getBookingId(), payBuddyPaymentResponse.getPaymentId(), BookingResponse.BookingResponseStatus.REJECTED);
+            return new BookingResponse(
+                    bookingPayment.getBookingId(),
+                    payBuddyPaymentResponse.getPaymentId()
+                    , BookingResponseStatus.REJECTED);
         }
     }
 }

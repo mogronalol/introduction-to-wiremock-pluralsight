@@ -14,14 +14,14 @@ public class PayBuddyGateway {
         this.payBuddyBaseUrl = payBuddyBaseUrl;
     }
 
-    public PayBuddyPaymentResponse makePayment(String creditCardNumber,
+    public void makePayment(String creditCardNumber,
                                                LocalDate creditCardExpiry,
                                                BigDecimal amount) {
         final PayBuddyPaymentRequest request =
                 new PayBuddyPaymentRequest(creditCardNumber, creditCardExpiry, amount);
 
-        return restTemplate.postForObject(payBuddyBaseUrl + "/payments",
+        restTemplate.postForObject(payBuddyBaseUrl + "/payments",
                 request,
-                PayBuddyPaymentResponse.class);
+                Void.class);
     }
 }

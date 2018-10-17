@@ -35,25 +35,38 @@ public class BookingServiceTest {
     public void shouldPayForSingleBooking() {
         // Given
         stubFor(post(urlPathEqualTo("/payments"))
-                .withRequestBody(matchingJsonPath("$.creditCardNumber", equalTo("1234-1234-1234-1234")))
-                .withRequestBody(matchingJsonPath("$.creditCardExpiry", equalTo("2018-02-01")))
-                .withRequestBody(matchingJsonPath("$.amount", equalTo("20.55")))
-                .withRequestBody(matchingJsonPath("$.paymentId"))
+                .withRequestBody(
+                        matchingJsonPath("creditCardNumber",
+                                equalTo("1234-1234-1234-1234"))
+                )
+                .withRequestBody(
+                        matchingJsonPath("creditCardExpiry",
+                                equalTo("2018-02-01"))
+                )
+                .withRequestBody(
+                        matchingJsonPath("amount",
+                                equalTo("20.55"))
+                )
+                .withRequestBody(
+                        matchingJsonPath("paymentId")
+                )
                 .willReturn(
                         okJson("{" +
                                 "  \"paymentResponseStatus\": \"SUCCESS\"" +
                                 "}")));
 
-        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234")).willReturn(okJson("{" +
-                "  \"blacklisted\": \"false\"" +
-                "}")));
+        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234"))
+                .willReturn(okJson("{" +
+                        "  \"blacklisted\": \"false\"" +
+                        "}")));
 
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
                 new BookingPayment(
                         "1111",
                         new BigDecimal("20.55"),
-                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
+                        new CreditCard("1234-1234-1234-1234",
+                                LocalDate.of(2018, 2, 1))));
 
         // Then
         assertThat(bookingResponse.getBookingId()).isEqualTo("1111");
@@ -64,33 +77,49 @@ public class BookingServiceTest {
     public void shouldPayFor100Bookings() {
         // Given
         stubFor(post(urlPathEqualTo("/payments"))
-                .withRequestBody(matchingJsonPath("$.creditCardNumber"))
-                .withRequestBody(matchingJsonPath("$.creditCardExpiry"))
-                .withRequestBody(matchingJsonPath("$.amount"))
-                .withRequestBody(matchingJsonPath("$.paymentId"))
+                .withRequestBody(
+                        matchingJsonPath("creditCardNumber")
+                )
+                .withRequestBody(
+                        matchingJsonPath("creditCardExpiry")
+                )
+                .withRequestBody(
+                        matchingJsonPath("amount")
+                )
+                .withRequestBody(
+                        matchingJsonPath("paymentId")
+                )
                 .willReturn(
                         okJson("{" +
                                 "  \"paymentResponseStatus\": \"SUCCESS\"" +
                                 "}")));
 
-        stubFor(get(urlPathMatching("/blacklisted-cards/.*")).willReturn(okJson("{" +
-                "  \"blacklisted\": \"false\"" +
-                "}")));
+        stubFor(get(urlPathMatching("/blacklisted-cards/.*"))
+                .willReturn(okJson("{" +
+                        "  \"blacklisted\": \"false\"" +
+                        "}")));
 
-        final Set<BookingPayment> batch = IntStream.range(0, 100).mapToObj(this::generateBookingPayment).collect(toSet());
+        final Set<BookingPayment> batch = IntStream.range(0, 100)
+                .mapToObj(this::generateBookingPayment)
+                .collect(toSet());
 
         // When
-        final Set<BookingResponse> bookingResponses = bookingService.payForMultipleBookingsInBatch(batch);
+        final Set<BookingResponse> bookingResponses = bookingService.
+                payForMultipleBookingsInBatch(batch);
 
         // Then
         assertThat(bookingResponses).hasSize(100);
         for (int i = 0; i < 100; i++) {
-            assertThat(bookingResponses).contains(new BookingResponse(Integer.toString(i), SUCCESS));
+            assertThat(bookingResponses)
+                    .contains(new BookingResponse(Integer.toString(i), SUCCESS));
         }
     }
 
     private BookingPayment generateBookingPayment(int i) {
-        final CreditCard creditCard = new CreditCard(randomCreditCardNumber(), LocalDate.of(i, 1, 1));
+        final CreditCard creditCard = new CreditCard(
+                randomCreditCardNumber(),
+                LocalDate.of(i, 1, 1)
+        );
         return new BookingPayment(Integer.toString(i), new BigDecimal(i), creditCard);
     }
 

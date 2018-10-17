@@ -20,10 +20,14 @@ public class BookingService {
 
         final CreditCard creditCard = bookingPayment.getCreditCard();
 
-        final PayBuddyFraudCheckResponse payBuddyFraudCheckResponse = payBuddyGateway.fraudCheck(creditCard.getNumber());
+        final PayBuddyFraudCheckResponse payBuddyFraudCheckResponse =
+                payBuddyGateway.fraudCheck(bookingPayment.getCreditCard().getNumber());
 
         if (payBuddyFraudCheckResponse.isBlacklisted()) {
-            return new BookingResponse(bookingPayment.getBookingId(), null, SUSPECTED_FRAUD);
+            return new BookingResponse(
+                    bookingPayment.getBookingId(),
+                    null,
+                    SUSPECTED_FRAUD);
         }
 
         final PayBuddyPaymentResponse payBuddyPaymentResponse = payBuddyGateway.makePayment(creditCard.getNumber(), creditCard.getExpiry(), bookingPayment.getAmount());

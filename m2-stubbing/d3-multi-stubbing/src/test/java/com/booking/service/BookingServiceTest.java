@@ -11,7 +11,8 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.booking.service.BookingResponse.BookingResponseStatus.*;
+import static com.booking.service.BookingResponse.BookingResponseStatus.SUCCESS;
+import static com.booking.service.BookingResponse.BookingResponseStatus.SUSPECTED_FRAUD;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,9 +42,10 @@ public class BookingServiceTest {
                                 "  \"paymentResponseStatus\": \"SUCCESS\"" +
                                 "}")));
 
-        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234")).willReturn(okJson("{" +
-                "  \"blacklisted\": \"false\"" +
-                "}")));
+        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234"))
+                .willReturn(okJson("{" +
+                        "  \"blacklisted\": \"false\"" +
+                        "}")));
 
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
@@ -57,50 +59,26 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void shouldFailToPayForBookingDueToRejection() {
-        // Given
-        stubFor(post(urlPathEqualTo("/payments")).withRequestBody(
-                equalToJson("{" +
-                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
-                        "  \"creditCardExpiry\": \"2018-02-01\"," +
-                        "  \"amount\": 20.55" +
-                        "}"))
-                .willReturn(
-                        okJson("{" +
-                                "  \"paymentId\": \"2222\"," +
-                                "  \"paymentResponseStatus\": \"FAILED\"" +
-                                "}")));
-
-        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234")).willReturn(okJson("{" +
-                "  \"blacklisted\": \"false\"" +
-                "}")));
-
-        // When
-        final BookingResponse bookingResponse = bookingService.payForBooking(
-                new BookingPayment(
-                        "1111",
-                        new BigDecimal("20.55"),
-                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
-
-        // Then
-        assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", REJECTED));
-    }
-
-    @Test
     public void shouldFailToPayForBookingDueToFraud() {
         // Given
-        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234")).willReturn(okJson("{" +
-                "  \"blacklisted\": \"true\"" +
-                "}")));
+        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234"))
+                .willReturn(okJson("{" +
+                        "  \"blacklisted\": \"true\"" +
+                        "}")));
 
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
                 new BookingPayment(
                         "1111",
                         new BigDecimal("20.55"),
-                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
+                        new CreditCard("1234-1234-1234-1234",
+                                LocalDate.of(2018, 2, 1))));
 
         // Then
-        assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", null, SUSPECTED_FRAUD));
+        assertThat(bookingResponse)
+                .isEqualTo(new BookingResponse(
+                        "1111",
+                        null,
+                        SUSPECTED_FRAUD));
     }
 }
