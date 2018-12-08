@@ -6,7 +6,6 @@ import com.booking.gateway.PayBuddyGateway;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-import com.github.tomakehurst.wiremock.verification.NearMiss;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,7 +51,5 @@ public class BookingServiceTest {
                                 LocalDate.of(2222, 2, 2))));
 
         final List<ServeEvent> allServeEvents = WireMock.getAllServeEvents();
-
-        final List<NearMiss> nearMissesFor = WireMock.findNearMissesFor(postRequestedFor(urlPathMatching("/payments/1")));
     }
 }

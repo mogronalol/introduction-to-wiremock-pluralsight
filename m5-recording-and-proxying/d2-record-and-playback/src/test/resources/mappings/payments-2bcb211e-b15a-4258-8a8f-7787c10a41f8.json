@@ -1,0 +1,24 @@
+{
+  "id" : "2bcb211e-b15a-4258-8a8f-7787c10a41f8",
+  "name" : "payments",
+  "request" : {
+    "url" : "/payments",
+    "method" : "POST",
+    "bodyPatterns" : [ {
+      "equalToJson" : "{\"creditCardNumber\":\"1234-1234-1234-1234\",\"creditCardExpiry\":\"2018-02-01\",\"amount\":20.55}",
+      "ignoreArrayOrder" : true,
+      "ignoreExtraElements" : true
+    } ]
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\"paymentId\":\"0331729547\",\"paymentResponseStatus\":\"SUCCESS\"}",
+    "headers" : {
+      "Content-Type" : "application/json;charset=UTF-8",
+      "Date" : "Sat, 08 Dec 2018 11:43:43 GMT"
+    }
+  },
+  "uuid" : "2bcb211e-b15a-4258-8a8f-7787c10a41f8",
+  "persistent" : true,
+  "insertionIndex" : 2
+}

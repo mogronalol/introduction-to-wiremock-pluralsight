@@ -11,8 +11,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.booking.service.BookingResponse.BookingResponseStatus.COMPLETE;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.booking.service.BookingResponse.BookingResponseStatus.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookingServiceTest {
@@ -24,19 +23,21 @@ public class BookingServiceTest {
 
     @Before
     public void setUp() {
-
-        final String baseUrl = String.format("http://localhost:%s", wireMockRule.port());
-
-        bookingService = new BookingService(
-                new PayBuddyGateway(baseUrl)
-        );
+        bookingService = new BookingService(new PayBuddyGateway("localhost", 8080));
     }
 
-    @Test
-    public void shouldPayForBookingSuccessfully() {
-        // Given
-        stubFor(any(anyUrl()).willReturn(ok()));
+//    @Before
+//    public void startRecording() {
+//        WireMock.startRecording("http://localhost:8081");
+//    }
+//
+//    @After
+//    public void stopRecording() {
+//        WireMock.stopRecording();
+//    }
 
+    @Test
+    public void shouldSucceedToPayForBooking() {
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
                 new BookingPayment(
@@ -46,13 +47,6 @@ public class BookingServiceTest {
                                 LocalDate.of(2018, 2, 1))));
 
         // Then
-        assertThat(bookingResponse).isEqualTo(new BookingResponse(COMPLETE));
-
-        verify(postRequestedFor(urlPathEqualTo("/payments"))
-                .withRequestBody(equalToJson("{" +
-                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
-                        "  \"creditCardExpiry\": \"2018-02-01\"," +
-                        "  \"amount\": 20.55" +
-                        "}")));
+        assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "0331729547", SUCCESS));
     }
 }

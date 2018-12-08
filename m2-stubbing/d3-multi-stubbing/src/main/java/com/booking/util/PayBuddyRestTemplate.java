@@ -11,7 +11,6 @@ import static java.util.Arrays.asList;
 public class PayBuddyRestTemplate extends RestTemplate {
 
     public PayBuddyRestTemplate() {
-        super();
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
