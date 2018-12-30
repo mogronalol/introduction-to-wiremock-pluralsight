@@ -25,10 +25,11 @@ public class BookingServiceTest {
 
     @Before
     public void setUp() {
-        bookingService = new BookingService(new PayBuddyGateway("localhost", 8080));
+        bookingService = new BookingService(
+                new PayBuddyGateway("localhost", 8080));
 
-        stubFor(any(urlMatching(".*")).atPriority(10)
-                .willReturn(aResponse().proxiedFrom("http://localhost:8081")));
+        stubFor(any(anyUrl()).willReturn(
+                aResponse().proxiedFrom("http://localhost:8081")));
     }
 
     @Test
@@ -44,10 +45,12 @@ public class BookingServiceTest {
                 new BookingPayment(
                         "1111",
                         new BigDecimal("20.55"),
-                        new CreditCard("1234-1234-1234-1234", LocalDate.of(2018, 2, 1))));
+                        new CreditCard("1234-1234-1234-1234",
+                                LocalDate.of(2018, 2, 1))));
 
         // Then
-        assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", SUCCESS));
+        assertThat(bookingResponse).isEqualTo(
+                new BookingResponse("1111", SUCCESS));
     }
 
     @Test

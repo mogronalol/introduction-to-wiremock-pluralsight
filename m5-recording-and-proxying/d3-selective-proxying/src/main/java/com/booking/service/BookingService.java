@@ -6,6 +6,7 @@ import com.booking.gateway.PayBuddyFraudCheckResponse;
 import com.booking.gateway.PayBuddyGateway;
 import com.booking.gateway.PayBuddyPaymentResponse;
 
+import static com.booking.gateway.PayBuddyPaymentResponse.PaymentResponseStatus.SUCCESS;
 import static com.booking.service.BookingResponse.BookingResponseStatus.SUSPECTED_FRAUD;
 
 public class BookingService {
@@ -29,12 +30,16 @@ public class BookingService {
                     SUSPECTED_FRAUD);
         }
 
-        final PayBuddyPaymentResponse payBuddyPaymentResponse = payBuddyGateway.makePayment(creditCard.getNumber(), creditCard.getExpiry(), bookingPayment.getAmount());
+        final PayBuddyPaymentResponse payBuddyPaymentResponse =
+                payBuddyGateway.makePayment(creditCard.getNumber(),
+                        creditCard.getExpiry(), bookingPayment.getAmount());
 
-        if (payBuddyPaymentResponse.getPaymentResponseStatus() == PayBuddyPaymentResponse.PaymentResponseStatus.SUCCESS) {
-            return new BookingResponse(bookingPayment.getBookingId(), BookingResponse.BookingResponseStatus.SUCCESS);
+        if (payBuddyPaymentResponse.getPaymentResponseStatus() == SUCCESS) {
+            return new BookingResponse(bookingPayment.getBookingId(),
+                    BookingResponse.BookingResponseStatus.SUCCESS);
         } else {
-            return new BookingResponse(bookingPayment.getBookingId(), BookingResponse.BookingResponseStatus.REJECTED);
+            return new BookingResponse(bookingPayment.getBookingId(),
+                    BookingResponse.BookingResponseStatus.REJECTED);
         }
     }
 }
