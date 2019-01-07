@@ -45,10 +45,7 @@ public class BookingServiceTest {
     @Test
     public void shouldAddZeroTaxOntoInvoiceWhenTaxServiceIsDown() {
         // Given
-        stubFor(get(
-                urlPathEqualTo("/vat"))
-                .withQueryParam("amount", equalTo("100"))
-                .willReturn(serverError()));
+        stubFor(any(anyUrl()).willReturn(serverError()));
 
         // When
         final Invoice invoice = bookingService.generateInvoice("1234");
