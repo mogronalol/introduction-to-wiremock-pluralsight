@@ -12,6 +12,10 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
 
 import static java.util.Arrays.asList;
 
@@ -26,6 +30,7 @@ public class PayBuddyRestTemplate extends RestTemplate {
         try {
             SSLContext sslContext = SSLContextBuilder
                     .create()
+                    .loadKeyMaterial(ResourceUtils.getFile("classpath:client-keystore.jks"), "wiremock".toCharArray(), "wiremock".toCharArray())
                     .loadTrustMaterial(ResourceUtils.getFile("classpath:client-truststore.jks"), "wiremock".toCharArray())
                     .build();
 
@@ -38,5 +43,14 @@ public class PayBuddyRestTemplate extends RestTemplate {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private KeyStore loadPfx(String file, char[] password) throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        File key = ResourceUtils.getFile(file);
+        try (InputStream in = new FileInputStream(key)) {
+            keyStore.load(in, password);
+        }
+        return keyStore;
     }
 }
