@@ -1,0 +1,35 @@
+{
+  "request": {
+    "urlPath": "/templated"
+  },
+  "response": {
+    "jsonBody": {
+      "available" : [
+        {
+          "from" : "{{request.query.from}}",
+          "to" : "{{request.query.to}}",
+          "at" : "{{now}}",
+          "id" : "{{randomValue type='UUID'}}",
+          "price" : "£{{randomValue length=3 type='NUMERIC'}}"
+        },
+        {
+          "from" : "{{request.query.from}}",
+          "to" : "{{request.query.to}}",
+          "at" : "{{now}}",
+          "id" : "{{randomValue type='UUID'}}",
+          "price" : "£{{randomValue length=4 type='NUMERIC'}}"
+        },
+        {
+          "from" : "{{request.query.from}}",
+          "to" : "{{request.query.to}}",
+          "at" : "{{now}}",
+          "id" : "{{randomValue type='UUID'}}",
+          "price" : "£{{randomValue length=4 type='NUMERIC'}}"
+        }
+      ]
+    },
+    "transformers": [
+      "response-template"
+    ]
+  }
+}

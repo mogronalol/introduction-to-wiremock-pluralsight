@@ -20,7 +20,6 @@
         <module>m5-recording-and-proxying</module>
         <module>m6-fault-simulation</module>
         <module>m7-https</module>
-        <module>m8-templating-and-state</module>
     </modules>
 
     <dependencies>
