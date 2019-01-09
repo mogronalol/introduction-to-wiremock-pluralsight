@@ -1,0 +1,13 @@
+{
+  "scenarioName": "shopping",
+  "requiredScenarioState": "Started",
+  "request": {
+    "urlPath": "/shopping-basket",
+    "method" : "GET"
+  },
+  "response": {
+    "jsonBody": {
+      "basket" : []
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "scenarioName": "shopping",
+  "newScenarioState" : "basket-contains-eggs",
+  "request": {
+    "urlPath": "/shopping-basket",
+    "method" : "PUT",
+    "bodyPatterns" : [ {
+      "equalToJson" : ["eggs"]
+    }]
+  },
+  "response": {
+    "status" : 200
+  }
+}
