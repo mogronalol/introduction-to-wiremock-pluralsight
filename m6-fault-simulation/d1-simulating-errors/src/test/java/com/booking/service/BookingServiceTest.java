@@ -21,7 +21,10 @@ public class BookingServiceTest {
 
     @Before
     public void setUp() {
-        bookingService = new BookingService(new PayBuddyGateway("localhost", 8080));
+        bookingService = new BookingService(
+                new PayBuddyGateway(
+                        "localhost",
+                        8080));
     }
 
     @Test
@@ -33,31 +36,45 @@ public class BookingServiceTest {
                 .willReturn(okJson("{\"amount\" : 20}")));
 
         // When
-        final Invoice invoice = bookingService.generateInvoice("1234");
+        final Invoice invoice = bookingService.generateInvoice(
+                "1234");
 
         // Then
-        assertThat(invoice.getCostOfFlight()).isEqualByComparingTo(new BigDecimal(100));
-        assertThat(invoice.getTax()).isEqualByComparingTo(new BigDecimal(20));
-        assertThat(invoice.getTotal()).isEqualByComparingTo(new BigDecimal(120));
+        assertThat(invoice.getCostOfFlight())
+                .isEqualByComparingTo(new BigDecimal(100));
+
+        assertThat(invoice.getTax())
+                .isEqualByComparingTo(new BigDecimal(20));
+
+        assertThat(invoice.getTotal())
+                .isEqualByComparingTo(new BigDecimal(120));
     }
 
-
     @Test
-    public void shouldAddZeroTaxOntoInvoiceWhenTaxServiceIsDown() {
+    public void shouldAddZeroTaxOntoTheInvoiceWhenThereIsAServerError() {
         // Given
-        stubFor(any(anyUrl()).willReturn(serverError()));
+        stubFor(get(
+                urlPathEqualTo("/vat"))
+                .withQueryParam("amount", equalTo("100"))
+                .willReturn(serverError()));
 
         // When
-        final Invoice invoice = bookingService.generateInvoice("1234");
+        final Invoice invoice = bookingService.generateInvoice(
+                "1234");
 
         // Then
-        assertThat(invoice.getCostOfFlight()).isEqualByComparingTo(new BigDecimal(100));
-        assertThat(invoice.getTax()).isEqualByComparingTo(new BigDecimal(0));
-        assertThat(invoice.getTotal()).isEqualByComparingTo(new BigDecimal(100));
+        assertThat(invoice.getCostOfFlight())
+                .isEqualByComparingTo(new BigDecimal(100));
+
+        assertThat(invoice.getTax())
+                .isEqualByComparingTo(BigDecimal.ZERO);
+
+        assertThat(invoice.getTotal())
+                .isEqualByComparingTo(new BigDecimal(100));
     }
 
     @Test
-    public void shouldAddZeroTaxOntoInvoiceWhenResponseIsEmpty() {
+    public void shouldAddZeroTaxOntoTheInvoiceWhenResponseIsEmpty() {
         // Given
         stubFor(get(
                 urlPathEqualTo("/vat"))
@@ -65,16 +82,22 @@ public class BookingServiceTest {
                 .willReturn(aResponse().withFault(Fault.EMPTY_RESPONSE)));
 
         // When
-        final Invoice invoice = bookingService.generateInvoice("1234");
+        final Invoice invoice = bookingService.generateInvoice(
+                "1234");
 
         // Then
-        assertThat(invoice.getCostOfFlight()).isEqualByComparingTo(new BigDecimal(100));
-        assertThat(invoice.getTax()).isEqualByComparingTo(new BigDecimal(0));
-        assertThat(invoice.getTotal()).isEqualByComparingTo(new BigDecimal(100));
+        assertThat(invoice.getCostOfFlight())
+                .isEqualByComparingTo(new BigDecimal(100));
+
+        assertThat(invoice.getTax())
+                .isEqualByComparingTo(BigDecimal.ZERO);
+
+        assertThat(invoice.getTotal())
+                .isEqualByComparingTo(new BigDecimal(100));
     }
 
     @Test
-    public void shouldAddZeroTaxOntoInvoiceWhenResponseIsRandomData() {
+    public void shouldAddZeroTaxOntoTheInvoiceWhenResponseIsRandomData() {
         // Given
         stubFor(get(
                 urlPathEqualTo("/vat"))
@@ -82,16 +105,22 @@ public class BookingServiceTest {
                 .willReturn(aResponse().withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
 
         // When
-        final Invoice invoice = bookingService.generateInvoice("1234");
+        final Invoice invoice = bookingService.generateInvoice(
+                "1234");
 
         // Then
-        assertThat(invoice.getCostOfFlight()).isEqualByComparingTo(new BigDecimal(100));
-        assertThat(invoice.getTax()).isEqualByComparingTo(new BigDecimal(0));
-        assertThat(invoice.getTotal()).isEqualByComparingTo(new BigDecimal(100));
+        assertThat(invoice.getCostOfFlight())
+                .isEqualByComparingTo(new BigDecimal(100));
+
+        assertThat(invoice.getTax())
+                .isEqualByComparingTo(BigDecimal.ZERO);
+
+        assertThat(invoice.getTotal())
+                .isEqualByComparingTo(new BigDecimal(100));
     }
 
     @Test
-    public void shouldAddZeroTaxOntoInvoiceWhenResponseIsResetByPeer() {
+    public void shouldAddZeroTaxOntoTheInvoiceWhenConnectionIsReset() {
         // Given
         stubFor(get(
                 urlPathEqualTo("/vat"))
@@ -99,11 +128,17 @@ public class BookingServiceTest {
                 .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER)));
 
         // When
-        final Invoice invoice = bookingService.generateInvoice("1234");
+        final Invoice invoice = bookingService.generateInvoice(
+                "1234");
 
         // Then
-        assertThat(invoice.getCostOfFlight()).isEqualByComparingTo(new BigDecimal(100));
-        assertThat(invoice.getTax()).isEqualByComparingTo(new BigDecimal(0));
-        assertThat(invoice.getTotal()).isEqualByComparingTo(new BigDecimal(100));
+        assertThat(invoice.getCostOfFlight())
+                .isEqualByComparingTo(new BigDecimal(100));
+
+        assertThat(invoice.getTax())
+                .isEqualByComparingTo(BigDecimal.ZERO);
+
+        assertThat(invoice.getTotal())
+                .isEqualByComparingTo(new BigDecimal(100));
     }
 }
