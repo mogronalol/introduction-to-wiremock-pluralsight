@@ -19,11 +19,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingServiceTest {
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().httpsPort(8443)
-            .keystorePath("src/main/resources/server-keystore.jks")
-            .keystorePassword("wiremock")
-            .trustStorePath("src/main/resources/server-truststore.jks")
-            .trustStorePassword("wiremock")
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig()
+            .httpsPort(8443)
+            .keystorePath("src/main/resources/wiremock-keystore.jks")
+            .keystorePassword("password")
+            .trustStorePath("src/main/resources/wiremock-truststore.jks")
+            .trustStorePassword("password")
             .needClientAuth(true)
     );
 
@@ -31,7 +32,8 @@ public class BookingServiceTest {
 
     @Before
     public void setUp() {
-        bookingService = new BookingService(new PayBuddyGateway("localhost", 8443));
+        bookingService = new BookingService(
+                new PayBuddyGateway("localhost", 8443));
     }
 
     @Test
@@ -57,6 +59,7 @@ public class BookingServiceTest {
                                 LocalDate.of(2018, 2, 1))));
 
         // Then
-        assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", SUCCESS));
+        assertThat(bookingResponse)
+                .isEqualTo(new BookingResponse("1111", "2222", SUCCESS));
     }
 }

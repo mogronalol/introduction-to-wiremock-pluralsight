@@ -3,7 +3,7 @@ package com.booking.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -24,21 +24,20 @@ public class PayBuddyRestTemplate extends RestTemplate {
         setMessageConverters(asList(new MappingJackson2HttpMessageConverter(objectMapper)));
 
         try {
-            SSLContext sslContext = SSLContextBuilder
-                    .create()
+            final SSLContext sslContext = SSLContextBuilder.create()
                     .loadTrustMaterial(
                             ResourceUtils.getFile(
                                     "classpath:client-truststore.jks"),
                             "password".toCharArray())
                     .build();
 
-            HttpClient client = HttpClients.custom()
+            final CloseableHttpClient httpClient = HttpClients.custom()
                     .setSSLContext(sslContext)
                     .build();
 
-            setRequestFactory(new HttpComponentsClientHttpRequestFactory(client));
-
-        } catch (Exception e) {
+            setRequestFactory(new HttpComponentsClientHttpRequestFactory(httpClient));
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

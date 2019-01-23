@@ -19,7 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingServiceTest {
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().httpsPort(8443)
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig()
+            .httpsPort(8443)
             .keystorePath("src/main/resources/wiremock-keystore.jks")
             .keystorePassword("password")
     );
