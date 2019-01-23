@@ -16,10 +16,14 @@ public class PayBuddyRestTemplate extends RestTemplate {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         setMessageConverters(asList(new MappingJackson2HttpMessageConverter(objectMapper)));
-        final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+
+        final HttpComponentsClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory();
+
         requestFactory.setConnectionRequestTimeout(100);
         requestFactory.setConnectTimeout(100);
         requestFactory.setReadTimeout(100);
+
         setRequestFactory(requestFactory);
     }
 }

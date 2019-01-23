@@ -14,13 +14,26 @@ public class BookingService {
     private final PayBuddyGateway payBuddyGateway;
     private ExecutorService executorService;
 
-    public BookingService(PayBuddyGateway payBuddyGateway, int fixedAmountOfThreads, int queueCapacity) {
+    public BookingService(PayBuddyGateway payBuddyGateway,
+                          int fixedAmountOfThreads,
+                          int queueCapacity) {
+
         this.payBuddyGateway = payBuddyGateway;
 
-        final BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(queueCapacity);
-        final RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.AbortPolicy();
-        this.executorService = new ThreadPoolExecutor(fixedAmountOfThreads, fixedAmountOfThreads,
-                0L, TimeUnit.MILLISECONDS, blockingQueue, rejectedExecutionHandler);
+        final BlockingQueue<Runnable> blockingQueue =
+                new ArrayBlockingQueue<Runnable>(queueCapacity);
+
+        final RejectedExecutionHandler rejectedExecutionHandler =
+                new ThreadPoolExecutor.AbortPolicy();
+
+        this.executorService =
+                new ThreadPoolExecutor(
+                        fixedAmountOfThreads,
+                        fixedAmountOfThreads,
+                0L,
+                        TimeUnit.MILLISECONDS,
+                        blockingQueue,
+                        rejectedExecutionHandler);
     }
 
     public Future<Invoice> generateInvoice(final String pendingBookingId) {

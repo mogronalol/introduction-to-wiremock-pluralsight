@@ -18,15 +18,13 @@ public class BookingServiceTest {
 
     private BookingService bookingService;
 
-    // Four threads no delay = pass
-    // Four threads 50 delay = fail
-    // 16 threads 50 delay = pass
-    // 16 threads 1 - 150 delay = fail
-
 
     @Before
     public void setUp() {
-        bookingService = new BookingService(new PayBuddyGateway("localhost", 8080), 16, 50);
+        bookingService = new BookingService(
+                new PayBuddyGateway("localhost", 8080),
+                16,
+                50);
     }
 
     @Test
@@ -35,8 +33,9 @@ public class BookingServiceTest {
         stubFor(get(
                 urlPathEqualTo("/vat"))
                 .withQueryParam("amount", equalTo("100"))
-                .willReturn(okJson("{\"amount\" : 20}")
-                        .withFixedDelay(50)));
+                .willReturn(
+                        okJson("{\"amount\" : 20}")
+                                .withFixedDelay(50)));
 
         // When
         int rejected = 0;
@@ -51,17 +50,22 @@ public class BookingServiceTest {
         }
 
         // Then
-        assertThat(rejected).withFailMessage("Expected no rejections, but got %s", rejected).isZero();
+        assertThat(rejected).withFailMessage(
+                "Expected no rejections, but got %s", rejected)
+                .isZero();
     }
 
     @Test
-    public void shouldTimeoutTheTaxCheckIfRespondingSlowly() {
+    public void shouldTimeoutQuicklyIfTaxCheckIsTooSlow() {
         // Given
         stubFor(get(
                 urlPathEqualTo("/vat"))
                 .withQueryParam("amount", equalTo("100"))
-                .willReturn(okJson("{\"amount\" : 20}")
-                        .withUniformRandomDelay(10, 1000)));
+                .willReturn(
+                        okJson("{\"amount\" : 20}")
+                                .withUniformRandomDelay(
+                                        1,
+                                        150)));
 
         // When
         int rejected = 0;
@@ -76,6 +80,8 @@ public class BookingServiceTest {
         }
 
         // Then
-        assertThat(rejected).withFailMessage("Expected no rejections, but got %s", rejected).isZero();
+        assertThat(rejected).withFailMessage(
+                "Expected no rejections, but got %s", rejected)
+                .isZero();
     }
 }

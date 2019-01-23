@@ -19,23 +19,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingServiceTest {
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().httpsPort(8443));
-
-    static {
-        javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
-                (hostname, sslSession) -> {
-                    if (hostname.equals("localhost")) {
-                        return true;
-                    }
-                    return false;
-                });
-    }
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig()
+            .httpsPort(8443));
 
     private BookingService bookingService;
 
     @Before
     public void setUp() {
-        bookingService = new BookingService(new PayBuddyGateway("localhost", 8443));
+        bookingService = new BookingService(
+                new PayBuddyGateway("localhost", 8443));
     }
 
     @Test
@@ -61,6 +53,10 @@ public class BookingServiceTest {
                                 LocalDate.of(2018, 2, 1))));
 
         // Then
-        assertThat(bookingResponse).isEqualTo(new BookingResponse("1111", "2222", SUCCESS));
+        assertThat(bookingResponse)
+                .isEqualTo(new BookingResponse(
+                        "1111",
+                        "2222",
+                        SUCCESS));
     }
 }
