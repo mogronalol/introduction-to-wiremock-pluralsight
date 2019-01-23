@@ -20,6 +20,8 @@ public class BookingServiceTest {
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(wireMockConfig()
+            .keystorePath("src/main/resources/server-keystore.jks")
+            .keystorePassword("password")
             .httpsPort(8443));
 
     private BookingService bookingService;

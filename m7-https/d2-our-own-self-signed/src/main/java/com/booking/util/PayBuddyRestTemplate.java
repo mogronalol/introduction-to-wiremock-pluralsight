@@ -26,7 +26,10 @@ public class PayBuddyRestTemplate extends RestTemplate {
         try {
             SSLContext sslContext = SSLContextBuilder
                     .create()
-                    .loadTrustMaterial(ResourceUtils.getFile("classpath:client-truststore.jks"), "wiremock".toCharArray())
+                    .loadTrustMaterial(
+                            ResourceUtils.getFile(
+                                    "classpath:client-truststore.jks"),
+                            "password".toCharArray())
                     .build();
 
             HttpClient client = HttpClients.custom()
