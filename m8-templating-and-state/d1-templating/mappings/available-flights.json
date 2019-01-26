@@ -2,8 +2,11 @@
   "request": {
     "urlPath": "/flights",
     "queryParameters": {
-      "search_term": {
-        "matches": "^(.*)wiremock([A-Za-z]+)$"
+      "from": {
+        "matches": ".*"
+      },
+      "to": {
+        "matches": ".*"
       }
     },
     "method" : "GET"
@@ -33,9 +36,6 @@
           "price": "£{{randomValue length=4 type='NUMERIC'}}"
         }
       ]
-    },
-    "transformers": [
-      "response-template"
-    ]
+    }
   }
 }
