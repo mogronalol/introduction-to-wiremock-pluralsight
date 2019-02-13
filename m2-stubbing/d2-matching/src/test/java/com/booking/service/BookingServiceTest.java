@@ -31,7 +31,7 @@ public class BookingServiceTest {
         // Given
         stubFor(post(urlPathEqualTo("/payments"))
                 .withRequestBody(equalToJson("{" +
-                        "  \"creditCardNumber\": \"2222-1234-1234-1234\"," +
+                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
                         "  \"creditCardExpiry\": \"2018-02-01\"," +
                         "  \"amount\": 20.55" +
                         "}"))

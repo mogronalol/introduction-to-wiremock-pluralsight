@@ -74,7 +74,7 @@ public class BookingServiceTest {
 
         // Then
         assertThat(bookingResponse)
-                .isEqualTo(new BookingResponse("1111", "2222", REJECTED));
+                .isEqualTo(new BookingResponse("1111", "7777", REJECTED));
     }
 
 }
