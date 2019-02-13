@@ -34,8 +34,7 @@ public class BookingServiceTest {
                 urlPathEqualTo("/vat"))
                 .withQueryParam("amount", equalTo("100"))
                 .willReturn(
-                        okJson("{\"amount\" : 20}")
-                                .withFixedDelay(50)));
+                        okJson("{\"amount\" : 20}")));
 
         // When
         int rejected = 0;
@@ -62,10 +61,7 @@ public class BookingServiceTest {
                 urlPathEqualTo("/vat"))
                 .withQueryParam("amount", equalTo("100"))
                 .willReturn(
-                        okJson("{\"amount\" : 20}")
-                                .withUniformRandomDelay(
-                                        1,
-                                        150)));
+                        okJson("{\"amount\" : 20}")));
 
         // When
         int rejected = 0;

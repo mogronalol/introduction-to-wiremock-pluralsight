@@ -34,22 +34,12 @@ public class BookingServiceTest {
     @Test
     public void shouldPayForSingleBooking() {
         // Given
-        stubFor(post(urlPathEqualTo("/payments"))
-                .withRequestBody(
-                        matchingJsonPath("creditCardNumber",
-                                equalTo("1234-1234-1234-1234"))
-                )
-                .withRequestBody(
-                        matchingJsonPath("creditCardExpiry",
-                                equalTo("2018-02-01"))
-                )
-                .withRequestBody(
-                        matchingJsonPath("amount",
-                                equalTo("20.55"))
-                )
-                .withRequestBody(
-                        matchingJsonPath("paymentId")
-                )
+        stubFor(post(urlPathEqualTo("/payments")).withRequestBody(
+                equalToJson("{" +
+                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
+                        "  \"creditCardExpiry\": \"2018-02-01\"," +
+                        "  \"amount\": 20.55" +
+                        "}"))
                 .willReturn(
                         okJson("{" +
                                 "  \"paymentResponseStatus\": \"SUCCESS\"" +
@@ -76,19 +66,12 @@ public class BookingServiceTest {
     @Test
     public void shouldPayFor100Bookings() {
         // Given
-        stubFor(post(urlPathEqualTo("/payments"))
-                .withRequestBody(
-                        matchingJsonPath("creditCardNumber")
-                )
-                .withRequestBody(
-                        matchingJsonPath("creditCardExpiry")
-                )
-                .withRequestBody(
-                        matchingJsonPath("amount")
-                )
-                .withRequestBody(
-                        matchingJsonPath("paymentId")
-                )
+        stubFor(post(urlPathEqualTo("/payments")).withRequestBody(
+                equalToJson("{" +
+                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
+                        "  \"creditCardExpiry\": \"2018-02-01\"," +
+                        "  \"amount\": 20.55" +
+                        "}"))
                 .willReturn(
                         okJson("{" +
                                 "  \"paymentResponseStatus\": \"SUCCESS\"" +

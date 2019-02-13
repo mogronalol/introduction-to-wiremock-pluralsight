@@ -43,13 +43,11 @@ public class BookingServiceTest {
                                 "}")));
 
         stubFor(get(urlPathEqualTo("/blacklisted-cards/0000-0000-0000-0000"))
-                .atPriority(1)
                 .willReturn(okJson("{" +
                         "  \"blacklisted\": \"true\"" +
                         "}")));
 
         stubFor(get(urlPathMatching("/blacklisted-cards/.*"))
-                .atPriority(100)
                 .willReturn(okJson("{" +
                         "  \"blacklisted\": \"false\"" +
                         "}")));

@@ -27,9 +27,7 @@ public class BookingServiceTest {
 
         final String baseUrl = String.format("http://localhost:%s", wireMockRule.port());
 
-        bookingService = new BookingService(
-                new PayBuddyGateway(baseUrl)
-        );
+        bookingService = new BookingService(new PayBuddyGateway(baseUrl));
     }
 
     @Test
@@ -47,12 +45,5 @@ public class BookingServiceTest {
 
         // Then
         assertThat(bookingResponse).isEqualTo(new BookingResponse(COMPLETE));
-
-        verify(postRequestedFor(urlPathEqualTo("/payments"))
-                .withRequestBody(equalToJson("{" +
-                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
-                        "  \"creditCardExpiry\": \"2018-02-01\"," +
-                        "  \"amount\": 20.55" +
-                        "}")));
     }
 }

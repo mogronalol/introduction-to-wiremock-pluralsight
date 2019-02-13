@@ -3,9 +3,7 @@ package com.booking.service;
 import com.booking.domain.BookingPayment;
 import com.booking.domain.CreditCard;
 import com.booking.gateway.PayBuddyGateway;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -18,30 +16,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookingServiceTest {
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule();
-
     private BookingService bookingService;
 
     @Before
     public void setUp() {
-
-        final String baseUrl = String.format("http://localhost:%s", wireMockRule.port());
-
-        bookingService = new BookingService(
-                new PayBuddyGateway(baseUrl)
-        );
+        bookingService = new BookingService(new PayBuddyGateway("http://paybuddy-pluralsight"));
     }
 
     @Test
     public void shouldPayForBookingSuccessfully() {
-        // Given
-        stubFor(any(anyUrl()).willReturn(okJson("" +
-                "{" +
-                "  \"paymentId\": \"2222\"," +
-                "  \"paymentResponseStatus\": \"SUCCESS\"" +
-                "}")));
-
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
                 new BookingPayment(
@@ -57,13 +40,6 @@ public class BookingServiceTest {
 
     @Test
     public void shouldFailToPayForBooking() {
-        // Given
-        stubFor(any(anyUrl()).willReturn(okJson("" +
-                "{" +
-                "  \"paymentId\": \"7777\"," +
-                "  \"paymentResponseStatus\": \"FAILED\"" +
-                "}")));
-
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
                 new BookingPayment(

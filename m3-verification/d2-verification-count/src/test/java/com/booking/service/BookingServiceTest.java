@@ -48,7 +48,7 @@ public class BookingServiceTest {
         // Then
         assertThat(bookingResponse).isEqualTo(new BookingResponse(COMPLETE));
 
-        verify(1, postRequestedFor(urlPathMatching("/payments"))
+        verify(postRequestedFor(urlPathMatching("/payments"))
                 .withRequestBody(equalToJson("{" +
                         "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
                         "  \"creditCardExpiry\": \"2018-02-01\"," +

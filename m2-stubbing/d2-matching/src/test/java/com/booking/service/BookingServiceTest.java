@@ -29,12 +29,7 @@ public class BookingServiceTest {
     @Test
     public void shouldSucceedToPayForBooking() {
         // Given
-        stubFor(post(urlPathEqualTo("/payments"))
-                .withRequestBody(equalToJson("{" +
-                        "  \"creditCardNumber\": \"1234-1234-1234-1234\"," +
-                        "  \"creditCardExpiry\": \"2018-02-01\"," +
-                        "  \"amount\": 20.55" +
-                        "}"))
+        stubFor(any(anyUrl())
                 .willReturn(okJson("{" +
                         "  \"paymentId\": \"2222\"," +
                         "  \"paymentResponseStatus\": \"SUCCESS\"" +

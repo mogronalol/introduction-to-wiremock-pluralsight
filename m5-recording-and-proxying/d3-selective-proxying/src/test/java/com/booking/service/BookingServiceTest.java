@@ -27,9 +27,6 @@ public class BookingServiceTest {
     public void setUp() {
         bookingService = new BookingService(
                 new PayBuddyGateway("localhost", 8080));
-
-        stubFor(any(anyUrl()).willReturn(
-                aResponse().proxiedFrom("http://localhost:8081")));
     }
 
     @Test

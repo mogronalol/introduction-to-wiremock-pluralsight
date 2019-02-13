@@ -42,11 +42,6 @@ public class BookingServiceTest {
                                 "  \"paymentResponseStatus\": \"SUCCESS\"" +
                                 "}")));
 
-        stubFor(get(urlPathEqualTo("/blacklisted-cards/1234-1234-1234-1234"))
-                .willReturn(okJson("{" +
-                        "  \"blacklisted\": \"false\"" +
-                        "}")));
-
         // When
         final BookingResponse bookingResponse = bookingService.payForBooking(
                 new BookingPayment(

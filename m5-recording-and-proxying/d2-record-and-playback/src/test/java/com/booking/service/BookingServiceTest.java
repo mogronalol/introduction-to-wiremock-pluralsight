@@ -26,16 +26,6 @@ public class BookingServiceTest {
         bookingService = new BookingService(new PayBuddyGateway("localhost", 8080));
     }
 
-//    @Before
-//    public void startRecording() {
-//        WireMock.startRecording("http://localhost:8081");
-//    }
-//
-//    @After
-//    public void stopRecording() {
-//        WireMock.stopRecording();
-//    }
-
     @Test
     public void shouldSucceedToPayForBooking() {
         // When

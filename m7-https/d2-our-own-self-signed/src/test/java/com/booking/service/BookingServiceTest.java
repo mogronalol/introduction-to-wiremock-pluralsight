@@ -19,18 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BookingServiceTest {
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig()
-            .httpsPort(8443)
-            .keystorePath("src/main/resources/wiremock-keystore.jks")
-            .keystorePassword("password")
-    );
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig());
 
     private BookingService bookingService;
 
     @Before
     public void setUp() {
         bookingService = new BookingService(
-                new PayBuddyGateway("localhost", 8443));
+                new PayBuddyGateway("localhost", 8080));
     }
 
     @Test
